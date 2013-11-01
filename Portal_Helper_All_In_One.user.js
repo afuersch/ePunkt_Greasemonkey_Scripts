@@ -14,6 +14,8 @@
 // @resource 	ePunktCss https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ePunktScriptStyles.css
 // @updateURL 	https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
 // @downloadURL https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
+
+// @require		https://raw.github.com/WilliWWW/HelperFunctionsJS/master/HelperFunctions.js
 // ==/UserScript==
 
 /*
@@ -31,7 +33,7 @@ eR_Settings_PortalSignUp_InUse = GM_getValue("eR_Settings_PortalSignUp_InUse",tr
 eR_Settings_PortalSignUp_UseDateTime = GM_getValue("eR_Settings_PortalSignUp_UseDateTime",true);
 eR_Settings_PortalSignUp_FirstName = GM_getValue("eR_Settings_PortalSignUp_FirstName","ePunkt");
 eR_Settings_PortalSignUp_LastName = GM_getValue("eR_Settings_PortalSignUp_LastName","ePunkt");
-eR_Settings_PortalSignUp_Phone = GM_getValue("eR_Settings_PortalSignUp_Phone","ePunkt");
+eR_Settings_PortalSignUp_Phone = GM_getValue("eR_Settings_PortalSignUp_Phone","12345");
 eR_Settings_PortalSignUp_Email = GM_getValue("eR_Settings_PortalSignUp_Email","ePunktUser@epunkttest.com");
 eR_Settings_PortalSignUp_Email_UseRandom = GM_getValue("eR_Settings_PortalSignUp_Email_UseRandom",true);
 eR_Settings_PortalSignUp_BirthDate = GM_getValue("eR_Settings_PortalSignUp_BirthDate","01.01.2000");
@@ -49,6 +51,11 @@ eR_Settings_FillEducationDialog_InUse = GM_getValue("eR_Settings_FillEducationDi
 eR_Settings_FillPublicationDialog_InUse = GM_getValue("eR_Settings_FillPublicationDialog_InUse",true);
 
 eR_Settings_FillWorkExperienceDialog_InUse = GM_getValue("eR_Settings_FillWorkExperienceDialog_InUse",true);
+
+
+function testEval(eR_Settings_PortalSignUp_Nationality);
+function testWithoutEval(eR_Settings_PortalSignUp_Nationality);
+
 
 // div für context Menü erstellen
 document.getElementsByTagName('body')[0].innerHTML += "<div id='ApplicantPortalContexMenuDiv' style=''></div>";
@@ -247,7 +254,7 @@ $(function createMenu(){
 	
 });
 
-/*** Check which Buttons need to be created (depends on url) ***/
+/*** Check which Buttons/Functions need to be created (depends on url) ***/
 var urlPath = getUrlPath();
 var fullPathName = window.location.href;
 
