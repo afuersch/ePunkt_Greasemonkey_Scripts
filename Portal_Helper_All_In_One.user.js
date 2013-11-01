@@ -8,14 +8,13 @@
 // @version     1.0.2  
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
+// @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.ui.position.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.js
 // @resource 	contexMenusCss	https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.css
 // @resource 	ePunktCss https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ePunktScriptStyles.css
 // @updateURL 	https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
 // @downloadURL https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
-
-// @require		https://raw.github.com/WilliWWW/HelperFunctionsJS/master/HelperFunctions.js
 // ==/UserScript==
 
 /*
@@ -26,7 +25,6 @@
 var ePunktCssSource = GM_getResourceText("ePunktCss");
 
 eR_Settings_Menu_Width = GM_getValue("settings_Menu_Width", 600);
-
 eR_Settings_MenuShortCutKey = GM_getValue("eR_Settings_MenuShortCutKey",94); //'^'
 
 eR_Settings_PortalSignUp_InUse = GM_getValue("eR_Settings_PortalSignUp_InUse",true);
@@ -52,9 +50,6 @@ eR_Settings_FillPublicationDialog_InUse = GM_getValue("eR_Settings_FillPublicati
 
 eR_Settings_FillWorkExperienceDialog_InUse = GM_getValue("eR_Settings_FillWorkExperienceDialog_InUse",true);
 
-
-function testEval(eR_Settings_PortalSignUp_Nationality);
-function testWithoutEval(eR_Settings_PortalSignUp_Nationality);
 
 
 // div für context Menü erstellen
@@ -350,8 +345,6 @@ function createOverlay() {
         
         html += "Setting-Page-Width: <input class='erSetting_form' type='text' size='3' id='settings_Menu_Width' value='" + eval(eR_Settings_Menu_Width) +"'> px" + show_help("With this option you can expand the small layout. The default-value of gc.com is 450 px.") + "<br>";
 		
-        html += "<input class='erSetting_form' type='hidden' name='__VIEWSTATE' value=''>";
-		
 		html += "<h5 class='erGM_subHeadline'>Contex menu key combination</h5>";		
 		html += "Strg + : <input class='erSetting_form' type='text' size='1' id='eR_Settings_MenuShortCutKey' value='" +  String.fromCharCode(eval(eR_Settings_MenuShortCutKey)) +"'> " + show_help('Used key for key combination');
 		html += "<br/>";
@@ -418,45 +411,16 @@ function createOverlay() {
 
 
   
-// Close the Overlays (Find Player and GClh-Configuration)
+// Close the Overlays
 function btnClose(){
   if(document.getElementById('bg_shadow')) document.getElementById('bg_shadow').style.display = "none";
-  //if(document.getElementById('settings_overlay')) document.getElementById('settings_overlay').style.display = "none";
-  //if(document.getElementById('sync_settings_overlay')) document.getElementById('sync_settings_overlay').style.display = "none";
   if (document.getElementById('erSetting_overlay')) document.getElementById('erSetting_overlay').style.display = "none";
   
   //Reload Page because contex menu won't work otherwise (2DO=>Fix it)
   setTimeout(	function(){  content.wrappedJSObject.location=window.location.href; }, 500);	
- 
 }
 
-function inputField(setting_id, label, unit, help_text, size) {
-	//Set default size
-	size = typeof size !== 'undefined' ? size : 3;
 
-	var inputField = label + " <input class='erSetting_form' type='text' size='" + size + "' id='" + setting_id + "' value='" +  eval(setting_id) +"'> " + unit;
-	var help = "";
-	if(help_text){
-		help = show_help(help_text);
-	}
-	return inputField + help;
-}
-
-function checkbox(setting_id, label) {
-    return "<input type='checkbox' " + (eval(setting_id) ? "checked='checked'" : "") + " id='" + setting_id + "'> " + label;
-}
-
-function checkbox_Use_Block(setting_id, label, divId) {
-	var html = "";
-	html += "<h5 class='erGM_subHeadline'>";
-	html += "<input type=\"checkbox\" " + (eval(setting_id) ? "checked=\"checked\"" : "") + " id=\"" + setting_id + "\" onClick=\"$('#" + divId + "').toggleClass( 'darkClass' );\"> ";
-	html += label + "</h5>";
-	return html;
-}
-
-function show_help(text) {
-    return " <a class='eR_Setting_info' href='javascript:void(0);'><b>?</b><span class='eR_Setting_span'>" + text + "</span></a>";
-}
 
 
 // Save Button

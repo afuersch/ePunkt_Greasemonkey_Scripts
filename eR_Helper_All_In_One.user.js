@@ -8,6 +8,7 @@
 // @version     1.0.2 
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
+// @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.ui.position.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.js
 // @resource 	contexMenusCss	https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.css
@@ -28,6 +29,7 @@
 var ePunktCssSource = GM_getResourceText("ePunktCss");
 
 eR_Settings_Menu_Width = GM_getValue("settings_Menu_Width", 600);
+eR_Settings_MenuShortCutKey = GM_getValue("eR_Settings_MenuShortCutKey",94); //'^'
 
 eR_Settings_MyUserId = GM_getValue("eR_Settings_MyUserId",383);
 
@@ -40,13 +42,39 @@ eR_Settings_TimeTracker_drpBreak = GM_getValue("eR_Settings_TimeTracker_drpBreak
 
 eR_Settings_JobAdTemplateButtons_InUse = GM_getValue("eR_Settings_JobAdTemplateButtons_InUse", true);
 
-
-
 var defaultExtendedCss = "button, html input[type='button'], input[type='reset'], input[type='submit'] { background-color: #FF9BEC !important; } button:hover, html input[type='button']:hover, input[type='reset']:hover, input[type='submit']:hover { background-color: #D1E8FF !important; }";
 eR_Settings_ExtendedCss_InUse = GM_getValue("eR_Settings_ExtendedCss_InUse", false);
 eR_Settings_ExtendedCss = GM_getValue("eR_Settings_ExtendedCss", defaultExtendedCss);
  
 
+ 
+ // div für context Menü erstellen
+document.getElementsByTagName('body')[0].innerHTML += "<div id='eRContexMenuDiv' style=''></div>";
+
+// ausführen wenn die Html-Seite geladen wurde
+unsafeWindow.$(document).ready(function(){
+	// reagieren, wenn im Browserfenster eine Taste gedrückt wurde
+	unsafeWindow.$(document).keypress(function(e) {
+		// ausführen wenn Taste 'strg' + 'xxxxx' gedrückt wurde (default: '^')
+		// als Zahl die Ascii-Nummer
+		if (e.ctrlKey && e.which == eval(eR_Settings_MenuShortCutKey)){ //94 =>^   35 => '#'
+			//show the contextMenu
+			$("#eRContexMenuDiv").contextMenu({x: 500, y: 123});
+		}
+		
+		//If the user forget his choosen key open the menu always with alt + 1
+		if (e.altKey && e.which == 49){
+			//show the contextMenu
+			$("#eRContexMenuDiv").contextMenu({x: 500, y: 123});
+		}
+		
+		//Shortcut for open the settings menu (alt + 3)
+		if (e.altKey && e.which == 51){
+			setTimeout(	function(){ createOverlay(); }, 500);
+		}
+	});
+});
+ 
 
 // CSS Pfad: html body form#aspnetForm table tbody tr td.TabEmpty img
 // <img src="/Core/File.aspx?logo=1">
@@ -280,6 +308,12 @@ function createOverlay() {
         
         html += "Setting-Page-Width: <input class='erSetting_form' type='text' size='3' id='settings_Menu_Width' value='" + eval(eR_Settings_Menu_Width) +"'> px" + show_help("With this option you can expand the small layout. The default-value of gc.com is 450 px.") + "<br>";
 
+		html += "<h5 class='erGM_subHeadline'>Contex menu key combination</h5>";		
+		html += "Strg + : <input class='erSetting_form' type='text' size='1' id='eR_Settings_MenuShortCutKey' value='" +  String.fromCharCode(eval(eR_Settings_MenuShortCutKey)) +"'> " + show_help('Used key for key combination');
+		html += "<br/>";
+		html += "<br/>";
+		
+		
 		html += "<h5 class='erGM_subHeadline'>User ID: ";
 		html += inputField("eR_Settings_MyUserId", "", "", "User ID for open the correct user-permissions page") + "</h5><br/>";
 		
@@ -297,7 +331,6 @@ function createOverlay() {
 		html += inputField("eR_Settings_TimeTracker_drpBreak", "Break:", "", "") + "<br/>";
 		html += "</div>";
 		html += "<br/>";
-		
 		
 		html += checkbox_Use_Block('eR_Settings_ExtendedCss_InUse', "Extended CSS", "erGM_SettingBlock_ExtendedCss");
 		html += "<div id='erGM_SettingBlock_ExtendedCss' " + (eval(eR_Settings_ExtendedCss_InUse) ? "" : "class='darkClass'") + ">";
@@ -320,55 +353,14 @@ function createOverlay() {
     }
   }
   
-  // Close the Overlays (Find Player and GClh-Configuration)
+  // Close the Overlays
 function btnClose(){
   if(document.getElementById('bg_shadow')) document.getElementById('bg_shadow').style.display = "none";
-  //if(document.getElementById('settings_overlay')) document.getElementById('settings_overlay').style.display = "none";
-  //if(document.getElementById('sync_settings_overlay')) document.getElementById('sync_settings_overlay').style.display = "none";
   if (document.getElementById('erSetting_overlay')) document.getElementById('erSetting_overlay').style.display = "none";
   
   //Reload Page because contex menu won't work otherwise (2DO=>Fix it)
   setTimeout(	function(){  content.wrappedJSObject.location=window.location.href; }, 500);	
- 
 }
-
-function inputField(setting_id, label, unit, help_text, size) {
-	//Set default size
-	size = typeof size !== 'undefined' ? size : 3;
-
-	var inputField = label + " <input class='erSetting_form' type='text' size='" + size + "' id='" + setting_id + "' value='" +  eval(setting_id) +"'> " + unit;
-	var help = "";
-	if(help_text){
-		help = show_help(help_text);
-	}
-	return inputField + help;
-}
-
-function textArea(setting_id, label, rows, cols, help_text) {
-	var textArea = label + " <textarea id='" + setting_id + "'rows='" + rows + "' cols='" + cols + "'>" +  eval(setting_id) + "</textarea>";
-	var help = "";
-	if(help_text){
-		help = show_help(help_text);
-	}
-	return textArea + help;
-}
-
-function checkbox(setting_id, label) {
-    return "<input type='checkbox' " + (eval(setting_id) ? "checked='checked'" : "") + " id='" + setting_id + "'> " + label;
-}
-
-function checkbox_Use_Block(setting_id, label, divId) {
-	var html = "";
-	html += "<h5 class='erGM_subHeadline'>";
-	html += "<input type=\"checkbox\" " + (eval(setting_id) ? "checked=\"checked\"" : "") + " id=\"" + setting_id + "\" onClick=\"$('#" + divId + "').toggleClass( 'darkClass' );\"> ";
-	html += label + "</h5>";
-	return html;
-}
-
-function show_help(text) {
-    return " <a class='eR_Setting_info' href='javascript:void(0);'><b>?</b><span class='eR_Setting_span'>" + text + "</span></a>";
-}
-
 
 // Save Button
 function btnSave(){

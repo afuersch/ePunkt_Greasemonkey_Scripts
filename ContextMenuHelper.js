@@ -29,3 +29,12 @@ function checkbox_Use_Block(setting_id, label, divId) {
 function show_help(text) {
     return " <a class='eR_Setting_info' href='javascript:void(0);'><b>?</b><span class='eR_Setting_span'>" + text + "</span></a>";
 }
+
+function textArea(setting_id, label, rows, cols, help_text) {
+	var textArea = label + " <textarea id='" + setting_id + "'rows='" + rows + "' cols='" + cols + "'>" +  eval(setting_id) + "</textarea>";
+	var help = "";
+	if(help_text){
+		help = show_help(help_text);
+	}
+	return textArea + help;
+}
