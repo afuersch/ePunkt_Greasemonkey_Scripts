@@ -5,20 +5,22 @@
 // @include     http://staging.epunkt.net/Builds/Beta/eRecruiter/*
 // @include     http://staging.epunkt.net/Builds/Dev/eRecruiter/*
 // @include     https://er.epunkt.net/*
-// @version     1.01  
+// @version     1.0.2 
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.ui.position.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.js
 // @resource 	contexMenusCss	https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.css
 // @resource 	ePunktCss https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ePunktScriptStyles.css
+// @updateURL 	https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/eR_Helper_All_In_One.user.js
+// @downloadURL https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/eR_Helper_All_In_One.user.js
 // @icon		https://er.epunkt.net/favicon.ico
 // ==/UserScript==
 
 /*
- * v 1.00	17.10.2013 create
- * v 1.01	31.10.2013 add CSS from external file
- *
+ * v 1.0.0	17.10.2013 create
+ * v 1.0.1	31.10.2013 add CSS from external file and add 
+ * v 1.0.2	add update and download path
  *
  * TODO: add updateURL parameter to meta data to check vor updates automatically
 */

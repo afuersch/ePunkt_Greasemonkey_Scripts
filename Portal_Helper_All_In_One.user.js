@@ -5,18 +5,21 @@
 // @include     http://staging.epunkt.net/Builds/Beta/Portal/*
 // @include     http://staging.epunkt.net/Builds/Dev/Portal/*
 // @description A context menu with a settings area and some helper functions for the ePunkt applicant Portal: 1.) Log out from portal with key combination 2.)Fill Sign Up Form 3.) Fill Education Dialog 4.) Fill Publication Dialog 5.) Fill Work Experience Dialog
-// @version     1.01  
+// @version     1.0.2  
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.ui.position.js
 // @require		https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.js
 // @resource 	contexMenusCss	https://raw.github.com/medialize/jQuery-contextMenu/master/src/jquery.contextMenu.css
 // @resource 	ePunktCss https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ePunktScriptStyles.css
+// @updateURL 	https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
+// @downloadURL https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
 // ==/UserScript==
 
 /*
- * v 1.00	18.10.2013 create
- * v 1.01	31.10.2013 add CSS from external file
+ * v 1.0.0	18.10.2013 create
+ * v 1.0.1	31.10.2013 add CSS from external file
+ * v 1.0.2	add update and download path
 */
 var ePunktCssSource = GM_getResourceText("ePunktCss");
 
