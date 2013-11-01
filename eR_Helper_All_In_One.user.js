@@ -23,9 +23,7 @@
  * v 1.0.1	31.10.2013 add CSS from external file and add 
  * v 1.0.2	add update and download path
  *
- * TODO: add updateURL parameter to meta data to check vor updates automatically
 */
-
 var ePunktCssSource = GM_getResourceText("ePunktCss");
 
 eR_Settings_Menu_Width = GM_getValue("settings_Menu_Width", 600);
@@ -47,10 +45,6 @@ eR_Settings_ExtendedCss_InUse = GM_getValue("eR_Settings_ExtendedCss_InUse", fal
 eR_Settings_ExtendedCss = GM_getValue("eR_Settings_ExtendedCss", defaultExtendedCss);
  
 
- 
- // div für context Menü erstellen
-document.getElementsByTagName('body')[0].innerHTML += "<div id='eRContexMenuDiv' style=''></div>";
-
 // ausführen wenn die Html-Seite geladen wurde
 unsafeWindow.$(document).ready(function(){
 	// reagieren, wenn im Browserfenster eine Taste gedrückt wurde
@@ -59,13 +53,13 @@ unsafeWindow.$(document).ready(function(){
 		// als Zahl die Ascii-Nummer
 		if (e.ctrlKey && e.which == eval(eR_Settings_MenuShortCutKey)){ //94 =>^   35 => '#'
 			//show the contextMenu
-			$("#eRContexMenuDiv").contextMenu({x: 500, y: 123});
+			$(".TabEmpty").contextMenu({x: 500, y: 123});
 		}
 		
 		//If the user forget his choosen key open the menu always with alt + 1
 		if (e.altKey && e.which == 49){
 			//show the contextMenu
-			$("#eRContexMenuDiv").contextMenu({x: 500, y: 123});
+			$(".TabEmpty").contextMenu({x: 500, y: 123});
 		}
 		
 		//Shortcut for open the settings menu (alt + 3)
