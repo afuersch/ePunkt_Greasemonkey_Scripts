@@ -24,7 +24,7 @@
  * v 1.0.2	add update and download path
  * v 1.0.3	04.11.2013 add icon
 */
-alert('Hallo');
+
 var ePunktCssSource = GM_getResourceText("ePunktCss");
 
 eR_Settings_Menu_Width = GM_getValue("settings_Menu_Width", 600);
@@ -529,7 +529,6 @@ function PortalSignUp_FillForm(){
 		UserName = randWord;
 	}	
 	
-	
 	addValueById("FirstName", eR_Settings_PortalSignUp_FirstName);
 	addValueById("LastName", LastName);
 	addValueById("Phone", eR_Settings_PortalSignUp_Phone);
@@ -543,59 +542,7 @@ function PortalSignUp_FillForm(){
 	addValueById("UserName", UserName);
 	addValueById("Password", eR_Settings_PortalSignUp_Password);
 	addValueById("RepeatPassword", eR_Settings_PortalSignUp_Password);
-	/*
-	if(document.getElementById("FirstName")){
-		document.getElementById("FirstName").value = eR_Settings_PortalSignUp_FirstName;
-	}
-	
-	if(document.getElementById("LastName")){
-		document.getElementById("LastName").value = LastName;
-	}
-	
-	if(document.getElementById("Phone")){
-		document.getElementById("Phone").value = eR_Settings_PortalSignUp_Phone; 
-	}
-	
-	if(document.getElementById("Email")){
-		document.getElementById("Email").value = Email; 
-	}
-	
-	if(document.getElementById("BirthDate")){
-		document.getElementById("BirthDate").value = eR_Settings_PortalSignUp_BirthDate; 
-	}
 
-	if(document.getElementById("Street")){
-		document.getElementById("Street").value = eR_Settings_PortalSignUp_Street; 
-	}
-	
-	if(document.getElementById("ZipCode")){
-		document.getElementById("ZipCode").value = eR_Settings_PortalSignUp_ZipCode; 
-	}
-	
-	if(document.getElementById("City")){
-		document.getElementById("City").value = eR_Settings_PortalSignUp_City;
-	}
-	
-	if(document.getElementById("Country")){
-		document.getElementById("Country").selectedIndex = eR_Settings_PortalSignUp_Country; 
-	}
-	
-	if(document.getElementById("Nationality")){
-		document.getElementById("Nationality").selectedIndex = eR_Settings_PortalSignUp_Nationality; 
-	}
-	
-	if(document.getElementById("UserName")){
-		document.getElementById("UserName").value = UserName; 
-	}
-	
-	if(document.getElementById("Password")){
-		document.getElementById("Password").value = eR_Settings_PortalSignUp_Password;
-	}
-	
-	if(document.getElementById("RepeatPassword")){
-		document.getElementById("RepeatPassword").value = eR_Settings_PortalSignUp_Password; 
-	}
-	*/
 	if(document.getElementById("agreement1")){
 		document.getElementById("agreement1").checked = true;
 	}
@@ -680,7 +627,7 @@ function PublicationDialog_FillForm(){
 /*** END Fill Publication Dialog ***/
 
 
-/*** START Fill Publication Dialog ***/
+/*** START Fill WorkExperience Dialog ***/
 function FillWorkExperienceDialog_GenerateButton(){
 	var clickEvent = function (e) {
 		WorkExperienceDialog_FillForm();
@@ -740,8 +687,8 @@ function WorkExperienceDialog_FillForm(){
 	
 	selectItemByValue(document.getElementById("careerLevel"), optionsCareerLevel[careerLevel]); 
 	
-	document.getElementById("position").value = position; 
-	document.getElementById("tasks").value = tasks; 
-	document.getElementById("quitReason").value = quitReason;  
+	addValueById("position", position);
+	addValueById("tasks", tasks);
+	addValueById("quitReason", quitReason); 
 }
-/*** END Fill Publication Dialog ***/
+/*** END Fill WorkExperience Dialog ***/

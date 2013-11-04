@@ -112,3 +112,9 @@ function selectElementByIndex(elementId, elementIndex){
 		document.getElementById(elementId).selectedIndex = elementIndex; 
 	}
 }		
+
+function checkElementByValue(elementId, elementValue){
+	if(document.getElementById(elementId)){
+		document.getElementById(elementId).checked = elementValue;
+	}
+}

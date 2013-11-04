@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        eR_Helper_All_In_One
 // @namespace   ePunkt
-// @description A context menu for the eR with often used links and some helper Functions: 1.) Fill ePunkt time tracker with default values 2.) "Speichern" und "Vorschau" Buttons oben im Stelleninseratseditor anfügen 3.) CSS Style erweitern 4.) Create Applicant (create1.aspx & create2.aspx)
+// @description A context menu for the eR with often used links and some helper Functions: 1.) Fill ePunkt time tracker with default values 2.) "Speichern" und "Vorschau" Buttons oben im Stelleninseratseditor anfügen 3.) CSS Style erweitern 4.) Bewerber erstellen (create1.aspx & create2.aspx) 5.) Kunde erstellen 6.) Kundendetails ausfülen 7.) Benutzerdefinierte Felder beim Kunden befüllen
 // @include     http://staging.epunkt.net/Builds/Beta/eRecruiter/*
 // @include     http://staging.epunkt.net/Builds/Dev/eRecruiter/*
 // @include     http://localhost:50527/*
@@ -23,7 +23,7 @@
  * v 1.0.0	17.10.2013 create
  * v 1.0.1	31.10.2013 add CSS from external file and add 
  * v 1.0.2	add update and download path
- * v 1.0.3	04.11.2013 add create applicant at create1.aspx & create2.aspx
+ * v 1.0.3	04.11.2013 add create applicant at create1.aspx & create2.aspx, create company, fill company detail page, fill company customFields
  *
 */
 var ePunktCssSource = GM_getResourceText("ePunktCss");
@@ -51,6 +51,11 @@ eR_Settings_CreateApplicantAtCreate1_InUse = GM_getValue("eR_Settings_CreateAppl
 eR_Settings_CreateApplicantAtCreate2_InUse = GM_getValue("eR_Settings_CreateApplicantAtCreate2_InUse", true);
 
 eR_Settings_CreateCompany_InUse = GM_getValue("eR_Settings_CreateCompany_InUse", true);
+
+eR_Settings_FillCompanyDetail_InUse = GM_getValue("eR_Settings_FillCompanyDetail_InUse", true);
+
+eR_Settings_FillCompanyCustomFields_InUse = GM_getValue("eR_Settings_FillCompanyCustomFields_InUse", true);
+
 
 //Add CSS style for flat button 
 GM_addStyle(".ePunktButtonFlat { background-color: #00529E; border: medium none; border-radius: 3px 3px 3px 3px; color: #FFFFFF; margin: 4px 4px 4px 4px!important; padding: 3px 7px 3px 7px;}");
@@ -272,6 +277,18 @@ if(eval(eR_Settings_CreateCompany_InUse)){
 	}
 }
 
+if(eval(eR_Settings_FillCompanyDetail_InUse)){
+	if(urlPath.indexOf("Core/Company/Company.aspx") != -1){
+		FillCompanyDetail_GenerateButton();
+	}
+}
+
+if(eval(eR_Settings_FillCompanyCustomFields_InUse)){
+	if(urlPath.indexOf("Core/Company/CustomFields.aspx") != -1){
+		FillCompanyCustomFields_GenerateButton();
+	}
+}
+
 
 
 
@@ -376,6 +393,15 @@ function createOverlay() {
 		html += "</div>";
 		html += "<br/>";
 		
+		html += checkbox_Use_Block('eR_Settings_FillCompanyDetail_InUse', "Fill Company Details", "erGM_SettingBlock_FillCompanyDetail");
+		html += "<div id='erGM_SettingBlock_FillCompanyDetail' " + (eval(eR_Settings_FillCompanyDetail_InUse) ? "" : "class='darkClass'") + ">";
+		html += "</div>";
+		html += "<br/>";
+		
+		html += checkbox_Use_Block('eR_Settings_FillCompanyCustomFields_InUse', "Fill Company Custom Fields", "erGM_SettingBlock_FillCompanyCustomFields");
+		html += "<div id='erGM_SettingBlock_FillCompanyCustomFields' " + (eval(eR_Settings_FillCompanyCustomFields_InUse) ? "" : "class='darkClass'") + ">";
+		html += "</div>";
+		html += "<br/>";
 				
 		html += "<br/>";
 		html += "<input class='erSetting_form' id='btn_close1' type='button' value='close'> "; 
@@ -421,7 +447,9 @@ function btnSave(){
 	  'eR_Settings_ExtendedCss_InUse',
 	  'eR_Settings_CreateApplicantAtCreate1_InUse',
 	  'eR_Settings_CreateApplicantAtCreate2_InUse',
-	  'eR_Settings_CreateCompany_InUse'
+	  'eR_Settings_CreateCompany_InUse',
+	  'eR_Settings_FillCompanyDetail_InUse',
+	  'eR_Settings_FillCompanyCustomFields_InUse'
     );
 
     for (var i = 0; i < checkboxes.length; i++) {
@@ -630,3 +658,128 @@ function CreateCompany_FillForm(){
 	//console.log(logText);
 }
 /*** END CreateCompany ***/
+
+
+
+
+/*** START FillCompanyDetail ***/
+function FillCompanyDetail_GenerateButton(){
+	var clickEvent = function (e) {
+		FillCompanyDetail_FillForm();
+	}
+	var input = createInputButtonElement('Fill Company Details', 'FillCompanyDetail_FillButton', 'ePunktButtonFlat');
+	input.onclick = clickEvent;
+
+	var parent = document.getElementById('ctl00_Main_btnSave').parentNode;
+	parent.insertBefore(input, parent.firstChild);
+}
+
+function FillCompanyDetail_FillForm(){
+	//Kundenstatus
+	var companySatus = {
+		eRecruiter: randNumMinMax(0,8), //Index to select
+		ItConsulting: randNumMinMax(0,8), //Index to select,
+		Personalberatung: randNumMinMax(0,8), //Index to select
+		Talentor: randNumMinMax(0,8) //Index to select
+	}
+
+	//Fälligkeitsdatum
+	selectElementByIndex("ctl00_Main_companyStatiRepeater_ctl01_drpCompanyStatus", companySatus.eRecruiter);
+	selectElementByIndex("ctl00_Main_companyStatiRepeater_ctl02_drpCompanyStatus", companySatus.ItConsulting);
+	selectElementByIndex("ctl00_Main_companyStatiRepeater_ctl03_drpCompanyStatus", companySatus.Personalberatung);
+	selectElementByIndex("ctl00_Main_companyStatiRepeater_ctl04_drpCompanyStatus", companySatus.Talentor);
+	
+	//Informationen zur Rechnungslegung
+	var UID = randomWord(randNumMinMax(1,9));
+	var TermOfPayment = randNumMinMax(1, 99);
+	
+	addValueById("ctl00_Main_txtUid", UID);
+	addValueById("ctl00_Main_txtTermOfPayment", TermOfPayment);
+}
+/*** END FillCompanyDetail ***/
+
+
+/*** START FillCompanyCustomFields ***/
+function FillCompanyCustomFields_GenerateButton(){
+	var clickEvent = function (e) {
+		FillCompanyCustomFields_FillForm();
+	}
+	var input = createInputButtonElement('Fill Custom Fields', 'FillCompanyCustomFields_FillButton', 'ePunktButtonFlat');
+	input.onclick = clickEvent;
+
+	var parent = document.getElementById('ctl00_Main_btnSave').parentNode;
+	parent.insertBefore(input, parent.firstChild);
+}
+
+function FillCompanyCustomFields_FillForm(){
+	var now = new Date();
+	var day = addLeadingZeros(1,2,now.getDate());
+	var month = now.getMonth();
+	month += 1;
+	month = addLeadingZeros(1,2,month);
+	
+	var hour = addLeadingZeros(1,2,now.getHours());
+	var min = addLeadingZeros(1,2,now.getMinutes());
+	
+	//Anmerkungen
+	var comments = randomText(43);
+	
+	//Benefits
+	var benefits = {
+		Vorsorge: randBool(),
+		Erreichbarkeit: randBool(),
+		Arbeitszeit: randBool(),
+		Essen: randBool(),
+		Handy: randBool(),
+		Parkplatz: randBool(),
+		Firmenauto: randBool(),
+		Gesundheit: randBool(),
+		HomeOffice: randBool(),
+		Laptop: randBool(),
+		Weiterbildung: randBool(),
+		Mitarbeiterrabatte: randBool(),
+		Obst: randBool(),
+		OEffi: randBool()
+	}
+
+	//Bevorzugte Qualifikationen
+	var qualifications = randomText(15);
+	
+	//Geplante Einstellungen
+	var planedHire = randomWord(randNumMinMax(5,25));
+	//Geschäftskontakt/Partner
+	var partner = randNumMinMax(0,5); //ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl04_drpValue
+	//Gründungsjahr
+	var established = randNumMinMax(1900,2013);
+	//Mitarbeiter
+	var employees = randNumMinMax(0,6);
+	//Mögliche Positionen
+	var possiblePos = randomText(22);
+	
+	//Zahlungsmodalitäten
+	var paymentTerms = randomText(9);
+	
+	addValueById("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl00_txtValue", comments);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_0", benefits.Vorsorge);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_1", benefits.Erreichbarkeit);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_2", benefits.Arbeitszeit);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_3", benefits.Essen);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_4", benefits.Handy);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_5", benefits.Parkplatz);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_6", benefits.Firmenauto);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_7", benefits.Gesundheit);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_8", benefits.HomeOffice);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_9", benefits.Laptop);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_10", benefits.Weiterbildung);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_11", benefits.Mitarbeiterrabatte);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_12", benefits.Obst);
+	checkElementByValue("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl01_lstValue_13", benefits.OEffi);
+	addValueById("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl02_txtValue", qualifications);	
+	addValueById("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl03_txtValue", planedHire);
+	selectElementByIndex("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl04_drpValue", partner);
+	addValueById("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl05_txtValue", established);
+	selectElementByIndex("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl06_drpValue", employees);
+	addValueById("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl07_txtValue", possiblePos);
+	addValueById("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl08_txtValue", paymentTerms);
+}
+/*** END FillCompanyCustomFields ***/
