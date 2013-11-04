@@ -5,7 +5,7 @@
 // @include     http://staging.epunkt.net/Builds/Beta/Portal/*
 // @include     http://staging.epunkt.net/Builds/Dev/Portal/*
 // @description A context menu with a settings area and some helper functions for the ePunkt applicant Portal: 1.) Log out from portal with key combination 2.)Fill Sign Up Form 3.) Fill Education Dialog 4.) Fill Publication Dialog 5.) Fill Work Experience Dialog
-// @version     1.0.2  
+// @version     1.0.3  
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
@@ -15,13 +15,16 @@
 // @resource 	ePunktCss https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ePunktScriptStyles.css
 // @updateURL 	https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
 // @downloadURL https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/Portal_Helper_All_In_One.user.js
+// @icon		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/PortalIcon.png
 // ==/UserScript==
 
 /*
  * v 1.0.0	18.10.2013 create
  * v 1.0.1	31.10.2013 add CSS from external file
  * v 1.0.2	add update and download path
+ * v 1.0.3	04.11.2013 add icon
 */
+alert('Hallo');
 var ePunktCssSource = GM_getResourceText("ePunktCss");
 
 eR_Settings_Menu_Width = GM_getValue("settings_Menu_Width", 600);
@@ -526,6 +529,21 @@ function PortalSignUp_FillForm(){
 		UserName = randWord;
 	}	
 	
+	
+	addValueById("FirstName", eR_Settings_PortalSignUp_FirstName);
+	addValueById("LastName", LastName);
+	addValueById("Phone", eR_Settings_PortalSignUp_Phone);
+	addValueById("Email", Email);
+	addValueById("BirthDate", eR_Settings_PortalSignUp_BirthDate);
+	addValueById("Street", eR_Settings_PortalSignUp_Street);
+	addValueById("ZipCode", eR_Settings_PortalSignUp_ZipCode);
+	addValueById("City", eR_Settings_PortalSignUp_City);
+	selectElementByIndex("Country", eR_Settings_PortalSignUp_Country);
+	selectElementByIndex("Nationality", eR_Settings_PortalSignUp_Nationality);
+	addValueById("UserName", UserName);
+	addValueById("Password", eR_Settings_PortalSignUp_Password);
+	addValueById("RepeatPassword", eR_Settings_PortalSignUp_Password);
+	/*
 	if(document.getElementById("FirstName")){
 		document.getElementById("FirstName").value = eR_Settings_PortalSignUp_FirstName;
 	}
@@ -577,7 +595,7 @@ function PortalSignUp_FillForm(){
 	if(document.getElementById("RepeatPassword")){
 		document.getElementById("RepeatPassword").value = eR_Settings_PortalSignUp_Password; 
 	}
-	
+	*/
 	if(document.getElementById("agreement1")){
 		document.getElementById("agreement1").checked = true;
 	}

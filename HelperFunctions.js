@@ -100,3 +100,15 @@ function actualDateTimeString(){
         
         return actualDateTime = day + '-' + month + ' ' + hour + ':' + min;
 }
+
+function addValueById(elementId, elementValue){
+	if(document.getElementById(elementId)){
+		document.getElementById(elementId).value = elementValue;
+	}
+}
+
+function selectElementByIndex(elementId, elementIndex){
+	if(document.getElementById(elementId)){
+		document.getElementById(elementId).selectedIndex = elementIndex; 
+	}
+}		

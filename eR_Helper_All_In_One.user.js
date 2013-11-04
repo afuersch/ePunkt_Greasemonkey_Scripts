@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name        eR_Helper_All_In_One
 // @namespace   ePunkt
-// @description A context menu for the eR with often used links and some helper Functions: 1.) Fill ePunkt time tracker with default values<br/> 2.) "Speichern" und "Vorschau" Buttons oben im Stelleninseratseditor anfügen 3.) CSS Style erweitern
+// @description A context menu for the eR with often used links and some helper Functions: 1.) Fill ePunkt time tracker with default values 2.) "Speichern" und "Vorschau" Buttons oben im Stelleninseratseditor anfügen 3.) CSS Style erweitern 4.) Create Applicant (create1.aspx & create2.aspx)
 // @include     http://staging.epunkt.net/Builds/Beta/eRecruiter/*
 // @include     http://staging.epunkt.net/Builds/Dev/eRecruiter/*
+// @include     http://localhost:50527/*
 // @include     https://er.epunkt.net/*
-// @version     1.0.2 
+// @version     1.0.3 
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
@@ -22,6 +23,7 @@
  * v 1.0.0	17.10.2013 create
  * v 1.0.1	31.10.2013 add CSS from external file and add 
  * v 1.0.2	add update and download path
+ * v 1.0.3	04.11.2013 add create applicant at create1.aspx & create2.aspx
  *
 */
 var ePunktCssSource = GM_getResourceText("ePunktCss");
@@ -43,7 +45,15 @@ eR_Settings_JobAdTemplateButtons_InUse = GM_getValue("eR_Settings_JobAdTemplateB
 var defaultExtendedCss = "button, html input[type='button'], input[type='reset'], input[type='submit'] { background-color: #FF9BEC !important; } button:hover, html input[type='button']:hover, input[type='reset']:hover, input[type='submit']:hover { background-color: #D1E8FF !important; }";
 eR_Settings_ExtendedCss_InUse = GM_getValue("eR_Settings_ExtendedCss_InUse", false);
 eR_Settings_ExtendedCss = GM_getValue("eR_Settings_ExtendedCss", defaultExtendedCss);
- 
+
+eR_Settings_CreateApplicantAtCreate1_InUse = GM_getValue("eR_Settings_CreateApplicantAtCreate1_InUse", true);
+
+eR_Settings_CreateApplicantAtCreate2_InUse = GM_getValue("eR_Settings_CreateApplicantAtCreate2_InUse", true);
+
+eR_Settings_CreateCompany_InUse = GM_getValue("eR_Settings_CreateCompany_InUse", true);
+
+//Add CSS style for flat button 
+GM_addStyle(".ePunktButtonFlat { background-color: #00529E; border: medium none; border-radius: 3px 3px 3px 3px; color: #FFFFFF; margin: 4px 4px 4px 4px!important; padding: 3px 7px 3px 7px;}");
 
 // ausführen wenn die Html-Seite geladen wurde
 unsafeWindow.$(document).ready(function(){
@@ -244,6 +254,27 @@ if(eval(eR_Settings_ExtendedCss_InUse)){
 	GM_addStyle(eR_Settings_ExtendedCss);
 }
 
+if(eval(eR_Settings_CreateApplicantAtCreate1_InUse)){
+	if(urlPath.indexOf("Core/Applicant/Create1.aspx") != -1){
+		CreateApplicantAtCreate1_GenerateButton();
+	}
+}
+
+if(eval(eR_Settings_CreateApplicantAtCreate2_InUse)){
+	if(urlPath.indexOf("Core/Applicant/Create2.aspx") != -1){
+		CreateApplicantAtCreate2_GenerateButton();
+	}
+}
+
+if(eval(eR_Settings_CreateCompany_InUse)){
+	if(urlPath.indexOf("Core/Company/Create.aspx") != -1){
+		CreateCompany_GenerateButton();
+	}
+}
+
+
+
+
 /*** Functions to help us ***/
 function getFullDomainPath(){
 	var fullPathName = window.location.href;
@@ -331,6 +362,20 @@ function createOverlay() {
 		html += textArea("eR_Settings_ExtendedCss", "Extended CSS Code:", 4, 50, "");
 		html += "</div>";
 		html += "<br/>";
+		
+		html += checkbox_Use_Block('eR_Settings_CreateApplicantAtCreate1_InUse', "Add 'Create Applicant' Button at Create1.aspx", "erGM_SettingBlock_CreateApplicantAtCreate1");
+		html += "<div id='erGM_SettingBlock_CreateApplicantAtCreate1' " + (eval(eR_Settings_CreateApplicantAtCreate1_InUse) ? "" : "class='darkClass'") + ">";
+		html += "</div>";	
+		html += checkbox_Use_Block('eR_Settings_CreateApplicantAtCreate2_InUse', "Add 'Create Applicant' Button at Create2.aspx", "erGM_SettingBlock_CreateApplicantAtCreate2");
+		html += "<div id='erGM_SettingBlock_CreateApplicantAtCreate2' " + (eval(eR_Settings_CreateApplicantAtCreate2_InUse) ? "" : "class='darkClass'") + ">";
+		html += "</div>";
+		html += "<br/>";
+		
+		html += checkbox_Use_Block('eR_Settings_CreateCompany_InUse', "Add 'Create Company' Button", "erGM_SettingBlock_CreateCompany");
+		html += "<div id='erGM_SettingBlock_CreateCompany' " + (eval(eR_Settings_CreateCompany_InUse) ? "" : "class='darkClass'") + ">";
+		html += "</div>";
+		html += "<br/>";
+		
 				
 		html += "<br/>";
 		html += "<input class='erSetting_form' id='btn_close1' type='button' value='close'> "; 
@@ -373,7 +418,10 @@ function btnSave(){
     var checkboxes = new Array(
 	  'eR_Settings_TimeTracker_InUse',
 	  'eR_Settings_JobAdTemplateButtons_InUse',
-	  'eR_Settings_ExtendedCss_InUse'
+	  'eR_Settings_ExtendedCss_InUse',
+	  'eR_Settings_CreateApplicantAtCreate1_InUse',
+	  'eR_Settings_CreateApplicantAtCreate2_InUse',
+	  'eR_Settings_CreateCompany_InUse'
     );
 
     for (var i = 0; i < checkboxes.length; i++) {
@@ -445,3 +493,140 @@ function JobAdTemplateButtons_ClickPreview(){
 	$("#preview").click();
 }
 /*** END JobAdTemplateButtons ***/
+
+/*** START CreateApplicantAtCreate1 ***/
+function CreateApplicantAtCreate1_GenerateButton(){
+	var clickEvent = function (e) {
+		CreateApplicantAtCreate1_FillForm();
+	}
+
+	var input = createInputButtonElement('Without CV Parser', 'CreateApplicantAtCreate1_FillButton', 'ePunktButtonFlat');
+	input.onclick = clickEvent;	
+	
+	var parent = document.getElementById('ctl00_Main_btnCvParser').parentNode;
+	parent.insertBefore(input, parent.firstChild);
+}
+
+function CreateApplicantAtCreate1_FillForm(){
+	//alert('In function "fillForm"');
+	if(document.getElementById("ctl00_Main_drpCvParser")){
+		document.getElementById("ctl00_Main_drpCvParser").selectedIndex = 0; 
+	}
+	document.getElementById("ctl00_Main_btnCvParser").click();
+}
+/*** END CreateApplicantAtCreate1 ***/
+
+/*** START CreateApplicantAtCreate2 ***/
+function CreateApplicantAtCreate2_GenerateButton(){
+	var clickEvent = function (e) {
+		CreateApplicantAtCreate2_FillForm();
+	}
+
+	var input = createInputButtonElement('Fill Applicants Data', 'CreateApplicantAtCreate2_FillButton', 'ePunktButtonFlat');
+	input.onclick = clickEvent;
+
+	var parent = document.getElementById('ctl00_Main_btnSave').parentNode;
+	parent.insertBefore(input, parent.firstChild);
+}
+
+function CreateApplicantAtCreate2_FillForm(){
+	var FirstName = 'ePunkt';
+	var LastName = 'ePunkt eR ' + actualDateTimeString();
+	
+	var Title = randNum(7);
+	var TitleAfterName = randNum(9); 
+	
+	var BirthDate = '01.01.2000';
+	
+	var Street = 'ePunkt Plaza';
+	var ZipCode = '4020';
+	
+	var City = 'Linz';
+	var Country = 14; //Austria
+	
+	var Gender = randNum(2);
+	var Nationality = 14; //Austria
+	
+	var randWord = randomWord(10);
+	var Email = randWord + '@mailsendbox.net';
+	
+	var Phone = '12345';
+	var PhoneTime = randNum(4);
+	
+	var Tags = "C#, GreaseMonkey generated";
+	var Referrer = randNum(29) + 1;
+	
+	var Classification = randNum(4);
+	
+	addValueById("ctl00_Main_PersonalData_txtFirstName", FirstName);
+	addValueById("ctl00_Main_PersonalData_txtLastName", LastName);
+	selectElementByIndex("ctl00_Main_PersonalData_drpTitle", Title);
+	selectElementByIndex("ctl00_Main_PersonalData_drpTitleAfterName", TitleAfterName);
+	addValueById("ctl00_Main_PersonalData_txtBirthdate", BirthDate);
+	addValueById("ctl00_Main_PersonalData_txtStreet", Street);
+	addValueById("ctl00_Main_PersonalData_txtZipCode", ZipCode);
+	addValueById("ctl00_Main_PersonalData_txtCity", City);
+	selectElementByIndex("ctl00_Main_PersonalData_drpCountry", Country);
+	selectElementByIndex("ctl00_Main_PersonalData_drpGender", Gender);
+	selectElementByIndex("ctl00_Main_PersonalData_drpNationality", Nationality);
+	addValueById("ctl00_Main_PersonalData_txtEmail", Email);
+	addValueById("ctl00_Main_PersonalData_txtPhone", Phone);
+	addValueById("ctl00_Main_PersonalData_drpPhoneTime", PhoneTime);
+	addValueById("ctl00_Main_Tags_txtTags", Tags);
+	selectElementByIndex("ctl00_Main_Referrer_drpReferrer", Referrer);
+	selectElementByIndex("ctl00_Main_Classification_drpClassification", Classification);
+
+	//var logText = "Applicant: " + FirstName + ' ' + LastName + "\tEmail: " + Email;
+	//console.log(logText);
+}
+/*** END CreateApplicantAtCreate2 ***/
+
+/*** START CreateCompany ***/
+function CreateCompany_GenerateButton(){
+	var clickEvent = function (e) {
+		CreateCompany_FillForm();
+	}
+	var input = createInputButtonElement('Fill Company Data', 'CreateCompany_FillButton', 'ePunktButtonFlat');
+	input.onclick = clickEvent;
+
+	var parent = document.getElementById('ctl00_Main_btnSave').parentNode;
+	parent.insertBefore(input, parent.firstChild);
+}
+
+function CreateCompany_FillForm(){
+	/*Kunde*/
+	var Name = 'Mars Express ' + actualDateTimeString();
+	var Street = 'Fifth Avenue 99';
+	var ZipCode = '6666';
+	var City = 'Lost Paradise';
+	var Website = 'www.TheFifthElement.zorg';
+	
+	addValueById("ctl00_Main_txtName", Name);
+	addValueById("ctl00_Main_txtStreet", Street);
+	addValueById("ctl00_Main_txtZipCode", ZipCode);
+	addValueById("ctl00_Main_txtCity", City);
+	addValueById("ctl00_Main_txtUrl", Website);
+
+	/*Ansprechpartner*/
+	var Gender = randNumMinMax(0,1);
+	var Title = 'Mr.';
+	var FirstName = 'Korben';
+	var LastName = 'Dallas eR ' + actualDateTimeString();
+	var Position = 'Taxi Driver';
+	var Phone = '0900 121 232';
+	var randWord = randomWord(10);
+	var Email = randWord + '@TheFifthElement.zorg';	
+
+	selectElementByIndex("ctl00_Main_drpGender", Gender);
+	addValueById("ctl00_Main_txtTitle", Title);
+	addValueById("ctl00_Main_txtFirstName", FirstName);
+	addValueById("ctl00_Main_txtLastName", LastName);
+	addValueById("ctl00_Main_txtPosition", Position);
+	addValueById("ctl00_Main_txtPhone", Phone);
+	addValueById("ctl00_Main_txtEmail", Email);
+	addValueById("ctl00_Main_txtTitle", Title);
+	
+	//var logText = "Company: " + Name + "\tEmail: " + Email;
+	//console.log(logText);
+}
+/*** END CreateCompany ***/
