@@ -110,7 +110,7 @@ len = listOfUrls2Change.push("https://vpv.bewerberportal.at/?Job=");
 
 for (var i=0;i<len;i++){
 	$("div.epunkt-content a[href^='" + listOfUrls2Change[i] + "']").each(function () {
-		var actualLocation = window.location.toString();;
+		var actualLocation = window.location.toString();
 		var newUrl = actualLocation.replace("/Jobs/Job?Job=","/?Job=");
 		this.href = newUrl;
 

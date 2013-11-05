@@ -6,7 +6,7 @@
 // @include     http://staging.epunkt.net/Builds/Dev/eRecruiter/*
 // @include     http://localhost:50527/*
 // @include     https://er.epunkt.net/*
-// @version     1.0.3 
+// @version     1.0.4 
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
@@ -24,12 +24,14 @@
  * v 1.0.1	31.10.2013 add CSS from external file and add 
  * v 1.0.2	add update and download path
  * v 1.0.3	04.11.2013 add create applicant at create1.aspx & create2.aspx, create company, fill company detail page, fill company customFields
+ * v 1.0.4	05.11.2013 add support to use helper for productive system
  *
 */
 var ePunktCssSource = GM_getResourceText("ePunktCss");
 
 eR_Settings_Menu_Width = GM_getValue("settings_Menu_Width", 600);
 eR_Settings_MenuShortCutKey = GM_getValue("eR_Settings_MenuShortCutKey",94); //'^'
+eR_Settings_UseAtProductiveSystem = GM_getValue("eR_Settings_UseAtProductiveSystem",false); //decide if helpers are used at er.epunkt.net
 
 eR_Settings_MyUserId = GM_getValue("eR_Settings_MyUserId",383);
 
@@ -240,56 +242,59 @@ $(function createMenu(){
 
 /*** Check which Buttons need to be created (depends on url) ***/
 var urlPath = getUrlPath();
+var domainPath = getFullDomainPath();
 
-if(eval(eR_Settings_TimeTracker_InUse)){
-	if(urlPath.indexOf("Modules/TimeTracker") != -1){
-		TimeTracker_GenerateButton();
+//only use helpers at productive system when it's activated
+if( ((domainPath.indexOf("https://er.epunkt.net/") != -1) && (eval(eR_Settings_UseAtProductiveSystem)) ) || (domainPath.indexOf("https://er.epunkt.net/") == -1) ){
+
+	if(eval(eR_Settings_TimeTracker_InUse)){
+		if(urlPath.indexOf("Modules/TimeTracker") != -1){
+			TimeTracker_GenerateButton();
+		}
+	}
+
+	if(eval(eR_Settings_JobAdTemplateButtons_InUse)){	
+		if(urlPath.indexOf("Core/Admin/Admin/JobAdTemplates/Default.aspx?template=") != -1){
+			GM_addStyle(".extraButton { background-color: #00529E; border: medium none; border-radius: 3px 3px 3px 3px; color: #FFFFFF; margin: 4px 4px 4px 4px!important; padding: 3px 7px 3px 7px;}");
+			JobAdTemplateButtons_Generate();
+		}
+	}
+
+	if(eval(eR_Settings_ExtendedCss_InUse)){
+		//add this on all eR sites
+		GM_addStyle(eR_Settings_ExtendedCss);
+	}
+
+	if(eval(eR_Settings_CreateApplicantAtCreate1_InUse)){
+		if(urlPath.indexOf("Core/Applicant/Create1.aspx") != -1){
+			CreateApplicantAtCreate1_GenerateButton();
+		}
+	}
+
+	if(eval(eR_Settings_CreateApplicantAtCreate2_InUse)){
+		if(urlPath.indexOf("Core/Applicant/Create2.aspx") != -1){
+			CreateApplicantAtCreate2_GenerateButton();
+		}
+	}
+
+	if(eval(eR_Settings_CreateCompany_InUse)){
+		if(urlPath.indexOf("Core/Company/Create.aspx") != -1){
+			CreateCompany_GenerateButton();
+		}
+	}
+
+	if(eval(eR_Settings_FillCompanyDetail_InUse)){
+		if(urlPath.indexOf("Core/Company/Company.aspx") != -1){
+			FillCompanyDetail_GenerateButton();
+		}
+	}
+
+	if(eval(eR_Settings_FillCompanyCustomFields_InUse)){
+		if(urlPath.indexOf("Core/Company/CustomFields.aspx") != -1){
+			FillCompanyCustomFields_GenerateButton();
+		}
 	}
 }
-
-if(eval(eR_Settings_JobAdTemplateButtons_InUse)){	
-	if(urlPath.indexOf("Core/Admin/Admin/JobAdTemplates/Default.aspx?template=") != -1){
-		GM_addStyle(".extraButton { background-color: #00529E; border: medium none; border-radius: 3px 3px 3px 3px; color: #FFFFFF; margin: 4px 4px 4px 4px!important; padding: 3px 7px 3px 7px;}");
-		JobAdTemplateButtons_Generate();
-	}
-}
-
-if(eval(eR_Settings_ExtendedCss_InUse)){
-	//add this on all eR sites
-	GM_addStyle(eR_Settings_ExtendedCss);
-}
-
-if(eval(eR_Settings_CreateApplicantAtCreate1_InUse)){
-	if(urlPath.indexOf("Core/Applicant/Create1.aspx") != -1){
-		CreateApplicantAtCreate1_GenerateButton();
-	}
-}
-
-if(eval(eR_Settings_CreateApplicantAtCreate2_InUse)){
-	if(urlPath.indexOf("Core/Applicant/Create2.aspx") != -1){
-		CreateApplicantAtCreate2_GenerateButton();
-	}
-}
-
-if(eval(eR_Settings_CreateCompany_InUse)){
-	if(urlPath.indexOf("Core/Company/Create.aspx") != -1){
-		CreateCompany_GenerateButton();
-	}
-}
-
-if(eval(eR_Settings_FillCompanyDetail_InUse)){
-	if(urlPath.indexOf("Core/Company/Company.aspx") != -1){
-		FillCompanyDetail_GenerateButton();
-	}
-}
-
-if(eval(eR_Settings_FillCompanyCustomFields_InUse)){
-	if(urlPath.indexOf("Core/Company/CustomFields.aspx") != -1){
-		FillCompanyCustomFields_GenerateButton();
-	}
-}
-
-
 
 
 /*** Functions to help us ***/
@@ -350,6 +355,13 @@ function createOverlay() {
         
         html += "Setting-Page-Width: <input class='erSetting_form' type='text' size='3' id='settings_Menu_Width' value='" + eval(eR_Settings_Menu_Width) +"'> px" + show_help("With this option you can expand the small layout. The default-value of gc.com is 450 px.") + "<br>";
 
+		var checkbox_UseAtProductiveSystem = checkbox_Use_Block('eR_Settings_UseAtProductiveSystem', "Use Helpers on Productive System", "erGM_SettingBlock_UseAtProductiveSystem");
+		var showHelp_UseAtProductiveSystem = show_help("Decide if helpers are used at productive system (https://er.epunkt.net)") + "</h5>";
+		html += checkbox_UseAtProductiveSystem.replace("</h5>",showHelp_UseAtProductiveSystem);
+		html += "<div id='erGM_SettingBlock_UseAtProductiveSystem' " + (eval(eR_Settings_UseAtProductiveSystem) ? "" : "class='darkClass'") + ">";
+		html += "</div>";
+		html += "<br/>";
+		
 		html += "<h5 class='erGM_subHeadline'>Contex menu key combination</h5>";		
 		html += "Strg + : <input class='erSetting_form' type='text' size='1' id='eR_Settings_MenuShortCutKey' value='" +  String.fromCharCode(eval(eR_Settings_MenuShortCutKey)) +"'> " + show_help('Used key for key combination');
 		html += "<br/>";
@@ -449,7 +461,8 @@ function btnSave(){
 	  'eR_Settings_CreateApplicantAtCreate2_InUse',
 	  'eR_Settings_CreateCompany_InUse',
 	  'eR_Settings_FillCompanyDetail_InUse',
-	  'eR_Settings_FillCompanyCustomFields_InUse'
+	  'eR_Settings_FillCompanyCustomFields_InUse',
+	  'eR_Settings_UseAtProductiveSystem'
     );
 
     for (var i = 0; i < checkboxes.length; i++) {
