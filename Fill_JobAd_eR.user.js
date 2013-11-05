@@ -3,16 +3,17 @@
 // @namespace   ePunkt
 // @description Füllt alle benötigten Felder in EditJobAd aus um einen Stelleninserat anzulegen
 // @include     http://localhost:50527/Core/Job/EditJobAd.aspx*
+// @include     https://er.epunkt.net/Core/Job/EditJobAd.aspx*
 // @include     http://staging.epunkt.net/Builds/Beta/eRecruiter/Core/Job/EditJobAd.aspx*
 // @include     http://staging.epunkt.net/Builds/Dev/eRecruiter/Core/Job/EditJobAd.aspx*
-// @version     1.0.1
+// @version     1.0.2
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // ==/UserScript==
 
 /* INFO: MUST BE AN EXTRA SCRIPT BECAUSE CKEDITOR CAN NOT BE LOADED OTHERWISE!!!! NO GM _addStyle!!!!!
  * v 1.0.0	10.09.2013 create
  * v 1.0.1	04.11.2013 update sources
- *
+ * v 1.0.2	05.11.2013 add support for er.epunkt.net
 */
 
 
