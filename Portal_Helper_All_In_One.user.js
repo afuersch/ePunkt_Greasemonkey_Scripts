@@ -4,8 +4,9 @@
 // @include     http://localhost:1901/*
 // @include     http://staging.epunkt.net/Builds/Beta/Portal/*
 // @include     http://staging.epunkt.net/Builds/Dev/Portal/*
+// @include     http://karriere.extra-games.net/*
 // @description A context menu with a settings area and some helper functions for the ePunkt applicant Portal: 1.) Log out from portal with key combination 2.)Fill Sign Up Form 3.) Fill Education Dialog 4.) Fill Publication Dialog 5.) Fill Work Experience Dialog
-// @version     1.0.3  
+// @version     1.0.4  
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
@@ -23,6 +24,7 @@
  * v 1.0.1	31.10.2013 add CSS from external file
  * v 1.0.2	add update and download path
  * v 1.0.3	04.11.2013 add icon
+ * v 1.0.4	20.11.2013 add "Fill Activites Dialog" function
 */
 
 var ePunktCssSource = GM_getResourceText("ePunktCss");
@@ -53,7 +55,7 @@ eR_Settings_FillPublicationDialog_InUse = GM_getValue("eR_Settings_FillPublicati
 
 eR_Settings_FillWorkExperienceDialog_InUse = GM_getValue("eR_Settings_FillWorkExperienceDialog_InUse",true);
 
-
+eR_Settings_ActivitiesDialogDialog_InUse = GM_getValue("eR_Settings_ActivitiesDialogDialog_InUse",true);
 
 // div für context Menü erstellen
 document.getElementsByTagName('body')[0].innerHTML += "<div id='ApplicantPortalContexMenuDiv' style=''></div>";
@@ -286,6 +288,13 @@ if(eval(eR_Settings_FillWorkExperienceDialog_InUse)){
 	}
 }
 
+if(eval(eR_Settings_ActivitiesDialogDialog_InUse)){
+	if( fullPathName.indexOf("/Applicants/AdditionalInformation") != -1 ){
+		ActivitiesDialog_GenerateButton();
+	}
+}
+
+
 /*** Functions to help us ***/
 function getHostAndPort(){
 	return window.location.origin;
@@ -391,6 +400,11 @@ function createOverlay() {
 		
 		html += checkbox_Use_Block('eR_Settings_FillWorkExperienceDialog_InUse', "Fill work experience dialog", "erGM_SettingBlock_FillWorkExperienceDialog");
 		html += "<div id='erGM_SettingBlock_FillWorkExperienceDialog' " + (eval(eR_Settings_FillWorkExperienceDialog_InUse) ? "" : "class='darkClass'") + ">";	
+		html += "</div>";
+		html += "<br/>";
+		
+		html += checkbox_Use_Block('eR_Settings_ActivitiesDialog_InUse', "Fill activities dialog", "erGM_SettingBlock_FillActivitiesDialog");
+		html += "<div id='erGM_SettingBlock_FillActivitiesDialog' " + (eval(eR_Settings_ActivitiesDialog_InUse) ? "" : "class='darkClass'") + ">";	
 		html += "</div>";
 		html += "<br/>";
 		
@@ -692,3 +706,38 @@ function WorkExperienceDialog_FillForm(){
 	addValueById("quitReason", quitReason); 
 }
 /*** END Fill WorkExperience Dialog ***/
+
+
+/*** START Fill Activities Dialog ***/
+function ActivitiesDialog_GenerateButton(){
+	var clickEvent = function (e) {
+		ActivitiesDialog_FillForm();
+	}
+
+	var input = createInputButtonElement('Fill Activities Form', 'Activities_FillButton', 'epunkt-button', '11px');
+	input.onclick = clickEvent;
+	
+	var parent = document.getElementById("activityDialog");
+	parent.appendChild( input );
+}
+
+function ActivitiesDialog_FillForm(){
+	var YearStart = parseInt( randNumMinMax(1980,2012) );	//startYear
+	var YearEnd = randNumMinMax(1980,2012);	//endYear
+	if(YearStart > YearEnd){
+		var temp = YearEnd; 
+		YearEnd = YearStart;
+		YearStart = temp;
+	}
+	var activityText = 'Aktivität ' + randomWord(4);
+	for(var i=0; i < 6; i++)    {
+      activityText += randomWord(randNumMinMax(4,10));
+	  activityText += ' ';
+    }
+
+	$("textarea#name.epunkt-textbox").val(activityText);
+
+	selectItemByValue(document.getElementById("start"), YearStart)
+	selectItemByValue(document.getElementById("end"), YearEnd);
+}
+/*** END Fill Activities Dialog ***/
