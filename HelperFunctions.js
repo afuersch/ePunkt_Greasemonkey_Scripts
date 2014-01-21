@@ -130,6 +130,7 @@ function checkElementByValue(elementId, elementValue){
 	}
 }
 
+/* Create a button with bootstrap class */
 function createBootstrapButtonElement(text, id, className) {
     //Set default class name
     className = typeof className !== 'undefined' ? className : 'btn btn-danger';
@@ -145,4 +146,13 @@ function createBootstrapButtonElement(text, id, className) {
     }else{
         return null;
     }
+}
+
+/* Select a random index of a select list */
+function selectRandomElement(elementId){
+	var elmnt = document.getElementById(elementId);
+	if(elmnt){
+		var randomIndex = randNum(elmnt.options.length);
+		selectElementByIndex(elementId, randomIndex);
+	}
 }
