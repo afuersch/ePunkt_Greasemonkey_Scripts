@@ -118,14 +118,31 @@ function selectElementByValue(elementId, elementValue){
 	if(elmnt){
 		for(var i=0; i < elmnt.options.length; i++)
 		{
-		  if(elmnt.options[i].value.toLowerCase() == elementValue.toLowerCase())
+		  if(elmnt.options[i].value.toLowerCase() == elementValue.toString().toLowerCase())
 			elmnt.selectedIndex = i;
 		}
 	}
-}		
+}	
 
 function checkElementByValue(elementId, elementValue){
 	if(document.getElementById(elementId)){
 		document.getElementById(elementId).checked = elementValue;
 	}
+}
+
+function createBootstrapButtonElement(text, id, className) {
+    //Set default class name
+    className = typeof className !== 'undefined' ? className : 'btn btn-danger';
+        
+    if( text != "" && text != null && id != "" && id != null){
+		var input = document.createElement('INPUT');
+        input.type = 'button';
+        input.value = text;
+        input.id = id;
+        input.className = className;
+		input.style.marginLeft = "20px";
+        return input;
+    }else{
+        return null;
+    }
 }
