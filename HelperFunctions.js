@@ -118,7 +118,7 @@ function selectElementByValue(elementId, elementValue){
 	if(elmnt){
 		for(var i=0; i < elmnt.options.length; i++)
 		{
-		  if(elmnt.options[i].value == elementValue)
+		  if(elmnt.options[i].value.toLowerCase() == elementValue.toLowerCase())
 			elmnt.selectedIndex = i;
 		}
 	}
