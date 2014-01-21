@@ -113,6 +113,17 @@ function selectElementByIndex(elementId, elementIndex){
 	}
 }		
 
+function selectElementByValue(elementId, elementValue){
+	var elmnt = document.getElementById(elementId);
+	if(elmnt){
+		for(var i=0; i < elmnt.options.length; i++)
+		{
+		  if(elmnt.options[i].value == elementValue)
+			elmnt.selectedIndex = i;
+		}
+	}
+}		
+
 function checkElementByValue(elementId, elementValue){
 	if(document.getElementById(elementId)){
 		document.getElementById(elementId).checked = elementValue;
