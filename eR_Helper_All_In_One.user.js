@@ -299,13 +299,12 @@ if( ((domainPath.indexOf("https://er.epunkt.net/") != -1) && (eval(eR_Settings_U
 			FillCompanyCustomFields_GenerateButton();
 		}
 	}
-	
+
 	if(eval(eR_Settings_CheckUsers_DefaultRights_InUse)){
-		if(urlPath.indexOf("Core/Admin/User/User.aspx") != -1){
+		if(urlPath.indexOf("Core/Admin/User/User.aspx?Id=") != -1){
 			CheckUsers_DefaultRights_GenerateButton();
 		}
 	}
-	//CheckUsers_DefaultRights_GenerateButton
 }
 
 
