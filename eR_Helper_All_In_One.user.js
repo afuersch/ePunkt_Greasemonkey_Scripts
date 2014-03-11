@@ -6,7 +6,7 @@
 // @include     http://staging.epunkt.net/Builds/Dev/eRecruiter/*
 // @include     http://localhost:50527/*
 // @include     https://er.epunkt.net/*
-// @version     1.0.4 
+// @version     1.0.5 
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
@@ -25,6 +25,7 @@
  * v 1.0.2	add update and download path
  * v 1.0.3	04.11.2013 add create applicant at create1.aspx & create2.aspx, create company, fill company detail page, fill company customFields
  * v 1.0.4	05.11.2013 add support to use helper for productive system
+ * v 1.0.5	11.03.2014 add function to fill user with selected default rights
  *
 */
 var ePunktCssSource = GM_getResourceText("ePunktCss");
@@ -57,6 +58,9 @@ eR_Settings_CreateCompany_InUse = GM_getValue("eR_Settings_CreateCompany_InUse",
 eR_Settings_FillCompanyDetail_InUse = GM_getValue("eR_Settings_FillCompanyDetail_InUse", true);
 
 eR_Settings_FillCompanyCustomFields_InUse = GM_getValue("eR_Settings_FillCompanyCustomFields_InUse", true);
+
+eR_Settings_CheckUsers_DefaultRights_InUse = GM_getValue("eR_Settings_CheckUsers_DefaultRights_InUse", true);
+
 
 
 //Add CSS style for flat button 
@@ -244,6 +248,7 @@ $(function createMenu(){
 var urlPath = getUrlPath();
 var domainPath = getFullDomainPath();
 
+
 //only use helpers at productive system when it's activated
 if( ((domainPath.indexOf("https://er.epunkt.net/") != -1) && (eval(eR_Settings_UseAtProductiveSystem)) ) || (domainPath.indexOf("https://er.epunkt.net/") == -1) ){
 
@@ -294,6 +299,13 @@ if( ((domainPath.indexOf("https://er.epunkt.net/") != -1) && (eval(eR_Settings_U
 			FillCompanyCustomFields_GenerateButton();
 		}
 	}
+	
+	if(eval(eR_Settings_CheckUsers_DefaultRights_InUse)){
+		if(urlPath.indexOf("Core/Admin/User/User.aspx") != -1){
+			CheckUsers_DefaultRights_GenerateButton();
+		}
+	}
+	//CheckUsers_DefaultRights_GenerateButton
 }
 
 
@@ -414,7 +426,15 @@ function createOverlay() {
 		html += "<div id='erGM_SettingBlock_FillCompanyCustomFields' " + (eval(eR_Settings_FillCompanyCustomFields_InUse) ? "" : "class='darkClass'") + ">";
 		html += "</div>";
 		html += "<br/>";
-				
+
+		html += checkbox_Use_Block('eR_Settings_CheckUsers_DefaultRights_InUse', "Check default rights for User", "erGM_SettingBlock_CheckUsers_DefaultRights");
+		html += "<div id='erGM_SettingBlock_CheckUsers_DefaultRights' " + (eval(eR_Settings_CheckUsers_DefaultRights_InUse) ? "" : "class='darkClass'") + ">";
+		html += "</div>";
+		html += "<br/>";		
+
+
+
+		
 		html += "<br/>";
 		html += "<input class='erSetting_form' id='btn_close1' type='button' value='close'> "; 
         html += "<input class='erSetting_form' id='btn_save' type='button' value='Save'>";
@@ -462,6 +482,7 @@ function btnSave(){
 	  'eR_Settings_CreateCompany_InUse',
 	  'eR_Settings_FillCompanyDetail_InUse',
 	  'eR_Settings_FillCompanyCustomFields_InUse',
+	  'eR_Settings_CheckUsers_DefaultRights_InUse',
 	  'eR_Settings_UseAtProductiveSystem'
     );
 
@@ -796,3 +817,61 @@ function FillCompanyCustomFields_FillForm(){
 	addValueById("ctl00_Main_customFields_groupRepeater_ctl00_repeater_ctl08_txtValue", paymentTerms);
 }
 /*** END FillCompanyCustomFields ***/
+
+
+
+/*** START Fill User with default rights (works only for EN and DE) ***/
+function CheckUsers_DefaultRights_GenerateButton(){
+	var clickEvent = function (e) {
+		CheckUsers_DefaultRights_FillForm();
+	}
+	var input = createInputButtonElement('Check default rights for User', 'CheckUsers_DefaultRights_FillButton', 'ePunktButtonFlat');
+	input.onclick = clickEvent;
+
+	var parent = document.getElementById('ctl00_Main_btnSave').parentNode;
+	parent.insertBefore(input, parent.firstChild);
+}
+
+function CheckUsers_DefaultRights_FillForm(){
+	//Checkboxes to Check 
+	var checkboxes = new Array(
+	  ['Erweiterte Statistiken', 'Advanced statistics'],
+	  ['Erweiterte Toolbar für HTML-Editor', 'Advanced toolbar for HTML editor'],
+	  ['Benutzer eines Kunden ändern', 'Change an accounts user'],
+	  ['Bewerbersuche', 'Applicant search'],
+	  ['Gehaltsinfos beim Bewerber ansehen', 'View applicant salary'],
+	  ['GLFs anzeigen', 'View interview protocols'],
+	  ['Reports anzeigen', 'View reports'],
+	  ['Ansprechpartner eines Jobs ändern', 'Change a jobs contact'],
+	  ['Benutzer eines Jobs ändern', 'Change a jobs user'],
+	  ['Gehaltsinfos beim Job anzeigen', 'View job salary'],
+	  ['Jobs veröffentlichen', 'Publish Jobs'],
+	  ['Stelleninserat bearbeiten', 'Edit job ads'],
+	  ['Workflow - Bewerber von Job lösen', 'Workflow - Remove applicant from job'],
+	  ['Workflow - Status manuell anpassen','Workflow - Change status manually']
+    );
+
+	var roleFieldset = document.getElementById('ctl00_Main_divRoles');
+	var lables = roleFieldset.getElementsByTagName("label");
+	
+	for (var i=0; i < lables.length; ++i) {
+		var lableText = lables[i].innerHTML.toLowerCase();
+		var parent = lables[i].parentNode;
+
+		//Check if label text is selected to check the right
+		for (var j = 0; j < checkboxes.length; j++) {		
+			if( (lableText === checkboxes[j][0].toLowerCase()) || (lableText === checkboxes[j][1].toLowerCase())){
+				var inputElement = parent.getElementsByTagName("input")[0];
+				if(inputElement){
+					inputElement.checked = new Boolean(true);
+				}
+				
+				//Remove element from array
+				checkboxes.splice(j, 1);
+				break ;
+			}
+
+		}		
+	}
+}
+/*** END Fill User with default rights ***/
