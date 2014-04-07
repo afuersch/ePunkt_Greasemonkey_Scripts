@@ -5,7 +5,7 @@
 // @include     http://localhost:1901/Jobs/Job*
 // @include     http://staging.epunkt.net/Builds/Beta/Portal/Jobs/Job*
 // @include     http://staging.epunkt.net/Builds/Dev/Portal/Jobs/Job*
-// @version     1.1.0
+// @version     1.1.2
 // @updateURL 	https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ChangeApplyOnlineButton_Portal.user.js
 // @downloadURL https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ChangeApplyOnlineButton_Portal.user.js
 // ==/UserScript==
@@ -17,7 +17,10 @@
  * v 1.0.2	20.03.2013 add new customer urls
  * v 1.0.3	24.09.2013 add new customer urls
  * v 1.1.0	04.11.2013 move to github, add update and install path
+ * v 1.1.1	03.12.2013 add url for marché
+ * v 1.1.2	07.04.2014 add url for Pöyry
  *
+ 
 */
 
 var listOfUrls2Change = [];
@@ -106,11 +109,14 @@ len = listOfUrls2Change.push("https://stellenangeboteintern.vorarlberg.at/?Job="
 len = listOfUrls2Change.push("https://career.holyfashiongroup.com/?Job=");
 len = listOfUrls2Change.push("http://careers.selecta.ch/?Job=");
 len = listOfUrls2Change.push("https://vpv.bewerberportal.at/?Job=");
+len = listOfUrls2Change.push("https://marche.bewerberportal.at/?Job=");
+len = listOfUrls2Change.push("http://marche.bewerberportal.at/?Job=");
+len = listOfUrls2Change.push("http://jobs.poyry.de/?Job=");
 
 
 for (var i=0;i<len;i++){
 	$("div.epunkt-content a[href^='" + listOfUrls2Change[i] + "']").each(function () {
-		var actualLocation = window.location.toString();
+		var actualLocation = window.location.toString();;
 		var newUrl = actualLocation.replace("/Jobs/Job?Job=","/?Job=");
 		this.href = newUrl;
 
