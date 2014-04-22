@@ -4,6 +4,7 @@
 // @include     http://localhost:1901/*
 // @include     http://staging.epunkt.net/Builds/Beta/Portal/*
 // @include     http://staging.epunkt.net/Builds/Dev/Portal/*
+// @include     http://staging.epunkt.net/builds/playground/portal/*
 // @include     http://karriere.extra-games.net/*
 // @description A context menu with a settings area and some helper functions for the ePunkt applicant Portal: 1.) Log out from portal with key combination 2.)Fill Sign Up Form 3.) Fill Education Dialog 4.) Fill Publication Dialog 5.) Fill Work Experience Dialog
 // @version     1.0.4  
@@ -55,7 +56,8 @@ eR_Settings_FillPublicationDialog_InUse = GM_getValue("eR_Settings_FillPublicati
 
 eR_Settings_FillWorkExperienceDialog_InUse = GM_getValue("eR_Settings_FillWorkExperienceDialog_InUse",true);
 
-eR_Settings_ActivitiesDialogDialog_InUse = GM_getValue("eR_Settings_ActivitiesDialogDialog_InUse",true);
+eR_Settings_ActivitiesDialog_InUse = GM_getValue("eR_Settings_ActivitiesDialog_InUse",true);
+
 
 // div für context Menü erstellen
 document.getElementsByTagName('body')[0].innerHTML += "<div id='ApplicantPortalContexMenuDiv' style=''></div>";
@@ -258,6 +260,8 @@ $(function createMenu(){
 var urlPath = getUrlPath();
 var fullPathName = window.location.href;
 
+
+
 if(eval(eR_Settings_LogOutFromPortal_InUse)){	
 	if( (fullPathName.indexOf("http://localhost:1901/Applicants/Index") != -1) || (fullPathName.indexOf("http://localhost:1901/Jobs/Index") != -1) || (fullPathName.indexOf("http://localhost:1901/SignUp/") != -1) ){
 		LogOutFromPortal();
@@ -288,7 +292,7 @@ if(eval(eR_Settings_FillWorkExperienceDialog_InUse)){
 	}
 }
 
-if(eval(eR_Settings_ActivitiesDialogDialog_InUse)){
+if(eval(eR_Settings_ActivitiesDialog_InUse)){
 	if( fullPathName.indexOf("/Applicants/AdditionalInformation") != -1 ){
 		ActivitiesDialog_GenerateButton();
 	}
@@ -343,7 +347,7 @@ function createOverlay() {
     }else{
         var html = "";
         var width = eval(eR_Settings_Menu_Width);
-		       
+	       
         //Style from external CSS file
 		html += "<style>";
 		html += ePunktCssSource;
@@ -402,25 +406,25 @@ function createOverlay() {
 		html += "<div id='erGM_SettingBlock_FillWorkExperienceDialog' " + (eval(eR_Settings_FillWorkExperienceDialog_InUse) ? "" : "class='darkClass'") + ">";	
 		html += "</div>";
 		html += "<br/>";
-		
+
 		html += checkbox_Use_Block('eR_Settings_ActivitiesDialog_InUse', "Fill activities dialog", "erGM_SettingBlock_FillActivitiesDialog");
 		html += "<div id='erGM_SettingBlock_FillActivitiesDialog' " + (eval(eR_Settings_ActivitiesDialog_InUse) ? "" : "class='darkClass'") + ">";	
 		html += "</div>";
 		html += "<br/>";
-		
-		
+
 		html += "<br/>";
 		html += "<input class='erSetting_form' id='btn_close1' type='button' value='close'> "; 
         html += "<input class='erSetting_form' id='btn_save' type='button' value='Save'>";
         html += "</div>";
 
-      document.getElementsByTagName('body')[0].innerHTML += html;
+		document.getElementsByTagName('body')[0].innerHTML += html;
 
 	  document.getElementById("settings_Menu_Width").focus();
 	  
       document.getElementById('btn_close1').addEventListener("click", btnClose, false);
       document.getElementById('btn_save').addEventListener("click", btnSave, false);
     }
+	
   }
   
   
@@ -471,6 +475,7 @@ function btnSave(){
 	  'eR_Settings_PortalSignUp_UserName_UseRandom',
 	  'eR_Settings_FillEducationDialog_InUse',
 	  'eR_Settings_FillPublicationDialog_InUse',
+	  'eR_Settings_ActivitiesDialog_InUse',
 	  'eR_Settings_FillWorkExperienceDialog_InUse'
     );
 	
@@ -600,7 +605,7 @@ function EducationDialog_FillForm(){
 		finished = false;
 	}
 	
-	selectItemByValue(document.getElementById("type"), EduType); 
+	selectElementByIndex(document.getElementById("type"), EduType); 
 	selectItemByValue(document.getElementById("startMonth"), MonthStart);   
 	selectItemByValue(document.getElementById("endMonth"), MonthEnd);    
 	selectItemByValue(document.getElementById("startYear"), YearStart)
@@ -678,7 +683,7 @@ function WorkExperienceDialog_FillForm(){
 	  tasks += ' ';
     }
 	
-	var quitReason = 'Austrittsgrung '+randomWord(4);
+	var quitReason = 'Austrittsgrund '+randomWord(4);
 	for(var i=0; i < 5; i++)    {
       quitReason += randomWord(randNumMinMax(4,10));
 	  quitReason += ' ';
