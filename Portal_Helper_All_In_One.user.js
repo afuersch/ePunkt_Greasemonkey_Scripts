@@ -26,6 +26,7 @@
  * v 1.0.2	add update and download path
  * v 1.0.3	04.11.2013 add icon
  * v 1.0.4	20.11.2013 add "Fill Activites Dialog" function
+ * v 1.0.5	22.04.2014 fix wrong setting and add playground url
 */
 
 var ePunktCssSource = GM_getResourceText("ePunktCss");
