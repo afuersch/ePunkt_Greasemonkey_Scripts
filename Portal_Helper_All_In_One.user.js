@@ -7,7 +7,7 @@
 // @include     http://staging.epunkt.net/builds/playground/portal/*
 // @include     http://karriere.extra-games.net/*
 // @description A context menu with a settings area and some helper functions for the ePunkt applicant Portal: 1.) Log out from portal with key combination 2.)Fill Sign Up Form 3.) Fill Education Dialog 4.) Fill Publication Dialog 5.) Fill Work Experience Dialog
-// @version     1.0.4  
+// @version     1.0.5  
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
@@ -26,7 +26,7 @@
  * v 1.0.2	add update and download path
  * v 1.0.3	04.11.2013 add icon
  * v 1.0.4	20.11.2013 add "Fill Activites Dialog" function
- * v 1.0.5	22.04.2014 fix wrong setting and add playground url
+ * v 1.0.5	22.04.2014 fix wrong setting and add playground url and fix url for log off with shortcut
 */
 
 var ePunktCssSource = GM_getResourceText("ePunktCss");
@@ -264,7 +264,7 @@ var fullPathName = window.location.href;
 
 
 if(eval(eR_Settings_LogOutFromPortal_InUse)){	
-	if( (fullPathName.indexOf("http://localhost:1901/Applicants/Index") != -1) || (fullPathName.indexOf("http://localhost:1901/Jobs/Index") != -1) || (fullPathName.indexOf("http://localhost:1901/SignUp/") != -1) ){
+	if( (fullPathName.indexOf("/Applicants/Index") != -1) || (fullPathName.indexOf("/Jobs/Index") != -1) || (fullPathName.indexOf("/SignUp/") != -1) ){
 		LogOutFromPortal();
 	}
 }
@@ -492,11 +492,33 @@ function btnSave(){
 /*** START Log Out from Portal ***/
 function LogOutFromPortal(){
 	// ausführen wenn die Html-Seite geladen wurde
+	
+	//ganze url ermitteln und den Teil entfernen der vom Bewerberportal stammt (um die Stamm Url zu bekommen)
+	var fullPathName = window.location.href;	
+	var newPath = "";
+	
+	if(fullPathName.indexOf("/Applicants/Index") != -1){
+		var pos = fullPathName.indexOf("/Applicants/Index");
+		newPath = fullPathName.substring(0,pos);	
+	}
+	
+	if(fullPathName.indexOf("/Jobs/Index") != -1){
+		var pos = fullPathName.indexOf("/Jobs/Index");
+		newPath = fullPathName.substring(0,pos);
+	}
+	
+	if(fullPathName.indexOf("/SignUp/") != -1){
+		var pos = fullPathName.indexOf("/SignUp/");
+		newPath = fullPathName.substring(0,pos);
+	}
+	//Anhängen der Bewerberportal spezifischen Url für das Log off
+	newPath = newPath + "/Home/LogOff";
+
 	unsafeWindow.$(document).ready(function(){
 		myform=document.createElement("form");
 		myform.setAttribute("id", "logOffWithShortcut");
 		myform.setAttribute("method", "post");
-		myform.setAttribute("action", "/Home/LogOff");
+		myform.setAttribute("action", newPath);
 		var contentByClass = document.getElementsByClassName('epunkt-content')[0];
 		contentByClass.appendChild( myform );
 		// reagieren, wenn im Browserfenster eine Taste gedrückt wurde
@@ -513,6 +535,7 @@ function LogOutFromPortal(){
 			}
 		});
 	});
+	
 }
 /*** END Log Out from Portal ***/
 
