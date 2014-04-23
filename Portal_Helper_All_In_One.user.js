@@ -5,9 +5,10 @@
 // @include     http://staging.epunkt.net/Builds/Beta/Portal/*
 // @include     http://staging.epunkt.net/Builds/Dev/Portal/*
 // @include     http://staging.epunkt.net/builds/playground/portal/*
+// @include     http://staging.epunkt.net/builds/playground/portal2/*
 // @include     http://karriere.extra-games.net/*
 // @description A context menu with a settings area and some helper functions for the ePunkt applicant Portal: 1.) Log out from portal with key combination 2.)Fill Sign Up Form 3.) Fill Education Dialog 4.) Fill Publication Dialog 5.) Fill Work Experience Dialog
-// @version     1.0.5  
+// @version     1.0.6  
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/ContextMenuHelper.js
@@ -27,6 +28,7 @@
  * v 1.0.3	04.11.2013 add icon
  * v 1.0.4	20.11.2013 add "Fill Activites Dialog" function
  * v 1.0.5	22.04.2014 fix wrong setting and add playground url and fix url for log off with shortcut
+ * v 1.0.6	23.04.2014 add new url for portal2 on playground 
 */
 
 var ePunktCssSource = GM_getResourceText("ePunktCss");
