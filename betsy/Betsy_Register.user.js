@@ -2,6 +2,7 @@
 // @name        Betsy_Register
 // @namespace   ePunkt
 // @include     http://localhost:55853/Register*
+// @include     http://epunkt-portal-stagingbeta.azurewebsites.net/Register*
 // @version     1.0.1  
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @require		https://raw.github.com/WinniB/ePunkt_Greasemonkey_Scripts/master/HelperFunctions.js
